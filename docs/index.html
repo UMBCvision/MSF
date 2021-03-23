@@ -1,13 +1,13 @@
 ---
 layout: default
-title: ISD 
+title: Mean Shift for Self-Supervised Learning 
 ---
 
 <div style="height:25px;">
-<p style="text-align:center;"><a href="https://www.linkedin.com/in/ajinkya-tejankar/">Ajinkya Tejankar</a><sup>∗</sup>, <a href="https://www.csee.umbc.edu/~soroush">Soroush Abbasi Koohpayegani</a><sup>∗</sup>, <a href="">Vipin Pillai</a>, <a href="">Paolo Favaro</a>, <a href="https://www.csee.umbc.edu/~hpirsiav/">Hamed Pirsiavash</a></p>
+<p style="text-align:center;"><a href="https://www.csee.umbc.edu/~soroush">Soroush Abbasi Koohpayegani</a><sup>∗</sup>, <a href="https://www.linkedin.com/in/ajinkya-tejankar/">Ajinkya Tejankar</a><sup>∗</sup>, <a href="https://www.csee.umbc.edu/~hpirsiav/">Hamed Pirsiavash</a></p>
 </div>
 <div style="height:25px;">
-<p style="text-align:center;">University of Maryland, Baltimore County, University of Bern</p>
+<p style="text-align:center;">University of Maryland, Baltimore County</p>
 </div>
 <div style="height:30px;">
 <p style="text-align:center; font-size:12px"><sup>∗</sup> denote equal contribution</p>
@@ -17,8 +17,8 @@ title: ISD
   <ul style="margin: 0px;">
       <li><a href='https://arxiv.org/abs/2010.14713'>[Paper]</a></li>
       <li><a href='.'>[Poster]</a></li>
-      <li><a href='https://github.com/UMBCvision/ISD'>[Code]</a></li>
-      <li><a href='/CompRess/bib.txt'>[Bib]</a></li>
+      <li><a href='https://github.com/UMBCvision/MSF'>[Code]</a></li>
+      <li><a href='/MSF/bib.txt'>[Bib]</a></li>
   </ul>
 </div>
 
@@ -26,17 +26,12 @@ title: ISD
 <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.gif" width="100%" alt style></p>
 
 <h5 id="abstract"><b>Abstract</b></h5>
-<p>Recently, contrastive learning has achieved great resultsin self-supervised learning, where the main idea is to push two augmentations 
-  of an image (positive pairs) closer compared to other random images (negative pairs).  We argue that not all random images are equal. 
-  Hence, we introduce a  self  supervised  learning  algorithm  where  we  use  a  soft similarity for the negative images rather than a binary 
-  distinction between positive and negative pairs. We iteratively distill a slowly evolving teacher model to the student model by capturing 
-  the similarity of a query image to some random images and transferring that knowledge to the student. We argue that our method is 
-  less constrained compared to recent  contrastive  learning  methods,  so  it  can  learn  better features.  
-  Specifically, our method should handle unbalanced and unlabeled data better than existing contrastive learning  methods,  
-  because  the  randomly  chosen  negative set might include many samples that are semantically similar  to  the  query  image. 
-  In  this  case,  our  method  labels them as highly similar while standard contrastive methods label  them  as  negative  pairs.  
-  Our  method  achieves  better results compared to state-of-the-art models like BYOL and MoCo on transfer learning settings. 
-  We also show that our  method  performs  better  in  the  settings  where  the  unlabeled  data  is  unbalanced.</p>
+<p>Most recent self-supervised learning (SSL) algorithms learn features by contrasting between instances of images or by clustering the 
+  images and then contrasting between the image clusters. We introduce a simple mean-shift algorithm that learns representations by grouping images
+  together without contrasting between them or adopting much of prior on the structure of the clusters. We simply "shift" the embedding of each
+  image to be close to the "mean" of its neighbors. Since in our setting, the closest neighbor is always another augmentation of the same image,
+  our model will be identical to BYOL when using only one nearest neighbor instead of 5 as used in our experiments. Our model achieves 72.4%
+  on ImageNet linear evaluation with ResNet50 at $200$ epochs outperforming BYOL.</p>
 
 <h5 id="contributions"><b>Contributions</b></h5>
   <p> 
