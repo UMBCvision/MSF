@@ -1,5 +1,8 @@
 # MSF
 Official code for "Mean Shift for Self-Supervised Learning"
+<p align="center">
+  <img src="https://raw.githubusercontent.com/UMBCvision/MSF/main/docs/assets/images/teaser.jpg" width="85%">
+</p>
 
 # Requirements
 
@@ -7,6 +10,18 @@ Official code for "Mean Shift for Self-Supervised Learning"
 - PyTorch >= 1.4
 - torchvision >= 0.5.0
 - faiss-gpu >= 1.6.1
+
+Install PyTorch and ImageNet dataset following the [official PyTorch ImageNet training code](https://github.com/pytorch/examples/tree/master/imagenet). We used Python 3.7 for our experiments.
+
+
+- Install PyTorch ([pytorch.org](http://pytorch.org))
+
+
+To run NN and Cluster Alignment, you require to install FAISS. 
+
+FAISS: 
+- Install FAISS ([https://github.com/facebookresearch/faiss/blob/master/INSTALL.md](https://github.com/facebookresearch/faiss/blob/master/INSTALL.md))
+
 
 # Training
 
