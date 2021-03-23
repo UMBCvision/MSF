@@ -1,7 +1,7 @@
 # MSF
 Official code for "Mean Shift for Self-Supervised Learning"
 <p align="center">
-  <img src="../../docs/assets/teaser.jpg" width="85%">
+  <img src="https://user-images.githubusercontent.com/62820830/112181641-fd0fdb80-8bd2-11eb-8444-8e0b0547e622.jpg" width="95%">
 </p>
 
 # Requirements
