@@ -40,3 +40,7 @@ python train_msf.py \
   --checkpoint_path <CHECKPOINT PATH> \
   <DATASET PATH>
 ```
+
+# License
+
+This project is under the MIT license.
