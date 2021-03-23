@@ -29,7 +29,6 @@ Following command can be used to train the MSF
 
 ```
 python train_msf.py \
-  --save_freq 50 \
   --cos \
   --weak_strong \
   --learning_rate 0.05 \
