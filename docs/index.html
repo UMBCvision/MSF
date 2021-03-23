@@ -1,0 +1,199 @@
+---
+layout: default
+title: ISD 
+---
+
+<div style="height:25px;">
+<p style="text-align:center;"><a href="https://www.linkedin.com/in/ajinkya-tejankar/">Ajinkya Tejankar</a><sup>∗</sup>, <a href="https://www.csee.umbc.edu/~soroush">Soroush Abbasi Koohpayegani</a><sup>∗</sup>, <a href="">Vipin Pillai</a>, <a href="">Paolo Favaro</a>, <a href="https://www.csee.umbc.edu/~hpirsiav/">Hamed Pirsiavash</a></p>
+</div>
+<div style="height:25px;">
+<p style="text-align:center;">University of Maryland, Baltimore County, University of Bern</p>
+</div>
+<div style="height:30px;">
+<p style="text-align:center; font-size:12px"><sup>∗</sup> denote equal contribution</p>
+</div>
+
+<div class="menu">
+  <ul style="margin: 0px;">
+      <li><a href='https://arxiv.org/abs/2010.14713'>[Paper]</a></li>
+      <li><a href='.'>[Poster]</a></li>
+      <li><a href='https://github.com/UMBCvision/ISD'>[Code]</a></li>
+      <li><a href='/CompRess/bib.txt'>[Bib]</a></li>
+  </ul>
+</div>
+
+<div>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.gif" width="100%" alt style></p>
+
+<h5 id="abstract"><b>Abstract</b></h5>
+<p>Recently, contrastive learning has achieved great resultsin self-supervised learning, where the main idea is to push two augmentations 
+  of an image (positive pairs) closer compared to other random images (negative pairs).  We argue that not all random images are equal. 
+  Hence, we introduce a  self  supervised  learning  algorithm  where  we  use  a  soft similarity for the negative images rather than a binary 
+  distinction between positive and negative pairs. We iteratively distill a slowly evolving teacher model to the student model by capturing 
+  the similarity of a query image to some random images and transferring that knowledge to the student. We argue that our method is 
+  less constrained compared to recent  contrastive  learning  methods,  so  it  can  learn  better features.  
+  Specifically, our method should handle unbalanced and unlabeled data better than existing contrastive learning  methods,  
+  because  the  randomly  chosen  negative set might include many samples that are semantically similar  to  the  query  image. 
+  In  this  case,  our  method  labels them as highly similar while standard contrastive methods label  them  as  negative  pairs.  
+  Our  method  achieves  better results compared to state-of-the-art models like BYOL and MoCo on transfer learning settings. 
+  We also show that our  method  performs  better  in  the  settings  where  the  unlabeled  data  is  unbalanced.</p>
+
+<h5 id="contributions"><b>Contributions</b></h5>
+  <p> 
+    1. In the standard contrastive setting, e.g., MoCo [4], there is a binary distinction between positive and negative pairs, 
+    but in practice, many negative pairs may be from the same category as the positive one. Thus, forcing the model to classify
+    them as negative is misleading. This can be more important when the unlabeled training data is unbalanced, for example, 
+    when a large portion of images are from a small number of categories. Such scenario can happen in applications like self-driving
+    cars, where most of the data is just repetitive data captured from a high-way scene with a couple of cars in it. 
+    In such cases, the standard contrastive learning methods will try to learn features to distinguish two instances 
+    of the large category that are in a negative pair, which may not be helpful for the down-stream task of understanding rare cases. 
+    We are interested in relaxing the binary classification of contrastive learning with soft labeling,
+    where the teacher network calculates the similarity of the query image with respect to a set of anchor 
+    points in the memory bank, convert that into a probability distribution over neighboring examples, 
+    and then transfer that knowledge to the student, so that the student also mimics the same neighborhood 
+    similarity.  We show that our method performs better than SOTA self-supervised methods on
+    ImageNet and also we show an improved accuracy on the rare cases when trained on unbalanced, unlabeled data (for which we use a subset of ImageNet).
+    
+    
+  </p>
+
+  
+  <p>
+      In the following figure, We sample some query images randomly (left column), calculate their teacher probability distribution over all anchor points in the memory bank 
+  (size=128K) and rank them in descending order (right columns). The second left column is another augmented version of the query image that contrastive
+  learning methods use for the positive pair. Our students learns to mimic the probability number written below each anchor image while contrastive learning
+  method (e.g., MoCo) learn to predict the one-hot encoding written below the images. Note that there are lots of images in the top anchor points that are 
+  semantically similar to the query point that MoCo tries to discriminate them from the query while our method does not.
+    </p>
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/fig1.png" width="100%" alt style></p>
+    
+  
+  <p> 
+  2. Most recent self-supervised learning methods including ours use an aggressive augmentation to learn good features.
+  However, those augmented images do not look natural to human eyes. This means they add a bias to the data that does not
+  exist in real world applications. We show that we can use a model trained with aggressive augmentation as a frozen teacher 
+  and then adapt it to another model that has not seen those aggressive augmentations. Interestingly the new model performs 
+  better than the teacher in down-stream transfer learning tasks. We believe this happens since the new model has adopted
+  priors of a more natural dataset through our similarity-based distillation.
+  </p>
+  
+  
+    <h5 id="Method"><b>Method</b></h5>
+<p> 
+    We initialize both teacher and student networks from scratch and update the teacher as running average of the student.
+  We feed some random images to the teacher, and feed two different augmentations of a query image to both teacher and student. 
+  We capture the similarity of the query to the anchor points in the teacher's embedding space and transfer that knowledge to 
+  the student. We update the student based on KL divergence loss and update the teacher to be a slow moving average of the student.
+  This can be seen as a soft version of MoCo which can handle negative images that are similar to the query
+  image. Note that unlike contrastive learning and BYOL, we never compare two augmentations of the query images directly (positive pair)
+    </p>
+
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.gif" width="90%" alt style></p>
+
+<h5 id="results"><b>Self-supervised Learning Results</b></h5>
+
+    <p>
+        We compare our method with other SSL methods on Linear and Nearest Neighbor (NN) evaluation on ImageNet as well as recall 
+      on transfer learning settings. Our method (ISD) outperforms MoCo and BYOL in most evaluations. * denotes that CompRess is 
+      not directly comparable as it uses a larger SSL model as the teacher: MoCo-V2(ResNet50) for ResNet18 and SimCLR(ResNet50x4) for ResNet50.
+        
+    </p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table1.png" width="100%" alt style>
+    
+    </p>
+    
+    <p>
+        Additionally, we evaluate our models on transfer tasks using nearest neighbor evaluation. * denotes that CompRess is not directly
+      comparable as it uses a larger SSL model as the teacher: MoCo-V2(ResNet50) for ResNet18 and SimCLR(ResNet50x4) for ResNet50.
+        
+    </p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table2.png" width="60%" alt style>
+    
+    </p>
+  
+  
+  <h5 id="evolution"><b>Evolution of teacher and student models</b></h5>
+  
+    <p>
+       
+      For every 10 epoch of ResNet-18, we evaluate both teacher and student models for BYOL, MoCo, and ISD methods using nearest neighbor. 
+      For all methods, the teacher performs usually better than the student in the initial epochs when the learning rate is small and then is very close to the student when learning rate shrinks.
+   
+  Interestingly, the teacher performs better than the student before shrinking the learning rate. Most previous works use 
+  the student as the final model which seems to be sub-ptimal. We believe this is due to ensembling effect similar to [10].
+    
+    </p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/fig2.png" width="100%" alt style>
+    
+    </p>
+
+    
+    <h5 id="augmentation biases"><b>Removing the bias of aggressive augmentations </b></h5>
+    
+<p>
+  Most recent self-supervised learning methods work by pulling embeddings of two different augmentations of an image close to each other. 
+  It is shown that using aggressive augmentations improves the performance probably by introducing more variation between the pair of augmented images.
+  Hence, using aggressive augmentation is standard in the new SSL methods. However, the augmented images do not look natural anymore, so the SSL model is 
+  trained on non-natural images. We argue that this bias may reduce the quality of the features in the final tasks where the images will be natural.
+  </p>
+  <p>
+  We use a variation of our method to remove the bias of aggressive augmentations that most recent SSL methods are trained with. 
+    Our ISD method performs similarity-based distillation iteratively where the student is optimized by distilling the teacher 
+    and the teacher is updated as a moving average of the student. One can initialize the teacher from an already trained model and set the momentum to 1,
+    which will ignore updating the teacher. Such a method can distill the teacher into a student model that is initialized from scratch. 
+    Note that this method is closely related to CompRess [1] except that we are using it for self-distillation instead of compressing from a deep model to a shallow one.
+   
+  We believe the student model performs better than the teacher on transfer learning settings since it has learned less unnatural biases.  
+  We use Linear evaluation and NN for evaluation.
+        
+    </p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table4.png" width="100%" alt style>
+    
+    </p>
+  
+ 
+<h5 id="unbalanced dataset"><b>Self-Supervised  Learning  on  Unbalanced Dataset </b></h5>
+    
+<p>
+  To study our method on unbalanced data, we design a controlled setting to introduce the unbalanced data in the SSL training only
+  and factor out its effect in the feature evaluation step. Hence, we subsample ImageNet data with 38 random categories where 8 categories are large 
+  (use all almost 1300 images per category) and 30 categories are small (use only 100 images per category.) 
+  We train our SSL method and then evaluate by nearest neighbor (NN) classifier on the balanced validation data. 
+  To make sure that the feature evaluation is not affected by the unbalanced data, we keep both evaluation and the training data of NN search balanced, 
+  so for NN search, we use all ImageNet training images (almost 1300 x 38 images) for those 38 categories. 
+  We repeat the sampling of 38 categories 10 times to come up with 10 datasets.
+          ``Diff'' shows the improvement of our method over MoCo. Interestingly the 
+  improvement is bigger in the rare categories. This is aligned with out hypothesis that our method can handle unbalanced, unlabeled 
+  data better since it does not consider all negative images equally negative.
+
+        
+    </p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table5.png" width="90%" alt style>
+    
+    </p>
+    
+    
+
+
+  
+<h5 id="cluster"><b>Cluster Visualizations</b></h5>   
+    
+    <p> We cluster ImageNet dataset into 1000 clusters using k-means and show random samples from random clusters.  
+      Each row corresponds to a cluster. Note that semantically similar images are clustered together.
+    </p>    
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/clusters.jpg" width="100%" alt style></p>
+
+<h5 id="references"><b>References</b></h5>
+  <br>[1] Soroush Abbasi Koohpayegani, Ajinkya Tejankar, and Hamed Pirsiavash. Compress: Self-supervised learning by compressing representations. Advances in Neural Information Processing Systems, 33, 2020.
+  <br>[2] Mathilde Caron, Ishan Misra, Julien Mairal, Priya Goyal, Pi-otr Bojanowski, and Armand Joulin.   Unsupervised learning of visual features by contrasting cluster assignments. arXivpreprint arXiv:2006.09882, 2020.
+  <br>[3] Jean-Bastien  Grill,  Florian  Strub,  Florent  Altche,  Corentin Tallec,  Pierre  H  Richemond,  Elena  Buchatskaya,  Carl  Doersch,  Bernardo Avila Pires,  Zhaohan Daniel Guo,  Mohammad Gheshlaghi Azar,  et al.   Bootstrap your own latent:  A new  approach  to  self-supervised  learning. arXiv  preprintarXiv:2006.07733, 2020.
+  <br>[4] Kaiming He,  Haoqi Fan,  Yuxin Wu,  Saining Xie,  and Ross Girshick.   Momentum  contrast  for  unsupervised  visual  representation learning.  InProceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pages 9729–9738, 2020.
+  <br>[5] Grant Van Horn, Oisin Mac Aodha, Yang Song, Yin Cui, ChenSun, Alex Shepard, Hartwig Adam, Pietro Perona, and Serge Belongie.  The inaturalist species classification and detectiondataset, 2018.
+  <br>[6] onathan Krause, Michael Stark, Jia Deng, and Li Fei-Fei. 3dobject representations for fine-grained categorization. InProceedings of the IEEE international conference on computervision workshops, pages 554–561, 2013.
+  <br>[7] S. Maji, J. Kannala, E. Rahtu, M. Blaschko, and A. Vedaldi.Finegrained visual classification of aircraft. Technical report,2013.
+  <br>[8] Maria-Elena  Nilsback  and  Andrew  Zisserman.    Automated flower  classification  over  a  large  number  of  classes.   InIndian  Conference  on  Computer  Vision,  Graphics  and  Image Processing, Dec 2008.
+  <br>[9] P. Welinder, S. Branson, T. Mita, C. Wah, F. Schroff, S. Belongie,  and  P.  Perona.   Caltech-UCSD  Birds  200.   Technical  Report  CNS-TR-2010-001,  California  Institute  of  Technology, 2010.
+  <br>[10] Antti Tarvainen and Harri Valpola.  Mean teachers are betterrole models:  Weight-averaged consistency targets improve semi-supervised deep learning results. InAdvances in neural information processing systems, pages 1195–1204, 2017.
+  
+  
