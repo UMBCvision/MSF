@@ -35,53 +35,38 @@ title: Mean Shift for Self-Supervised Learning
 
 <h5 id="contributions"><b>Contributions</b></h5>
   <p> 
-    1. In the standard contrastive setting, e.g., MoCo [4], there is a binary distinction between positive and negative pairs, 
-    but in practice, many negative pairs may be from the same category as the positive one. Thus, forcing the model to classify
-    them as negative is misleading. This can be more important when the unlabeled training data is unbalanced, for example, 
-    when a large portion of images are from a small number of categories. Such scenario can happen in applications like self-driving
-    cars, where most of the data is just repetitive data captured from a high-way scene with a couple of cars in it. 
-    In such cases, the standard contrastive learning methods will try to learn features to distinguish two instances 
-    of the large category that are in a negative pair, which may not be helpful for the down-stream task of understanding rare cases. 
-    We are interested in relaxing the binary classification of contrastive learning with soft labeling,
-    where the teacher network calculates the similarity of the query image with respect to a set of anchor 
-    points in the memory bank, convert that into a probability distribution over neighboring examples, 
-    and then transfer that knowledge to the student, so that the student also mimics the same neighborhood 
-    similarity.  We show that our method performs better than SOTA self-supervised methods on
-    ImageNet and also we show an improved accuracy on the rare cases when trained on unbalanced, unlabeled data (for which we use a subset of ImageNet).
+    We introduce a simple but effective mean-shift algorithm to group similar images together in the neighborhood of each image in an 
+    online fashion. The idea is to simply find the nearest neighbors of a query image in the embedding space and pull the embedding of 
+    query to be closer to the center of those neighbors. We believe this process will result in developing clusters of images in the
+    embedding space without enforcing much constraints about their specific size, number, or shape. Note that in contrast to grouping (pulling)
+    in our method, MoCo pushes the query to be far from any other data points particularly nearest neighbors by which the loss will be dominated.
     
     
   </p>
 
   
-  <p>
-      In the following figure, We sample some query images randomly (left column), calculate their teacher probability distribution over all anchor points in the memory bank 
-  (size=128K) and rank them in descending order (right columns). The second left column is another augmented version of the query image that contrastive
-  learning methods use for the positive pair. Our students learns to mimic the probability number written below each anchor image while contrastive learning
-  method (e.g., MoCo) learn to predict the one-hot encoding written below the images. Note that there are lots of images in the top anchor points that are 
-  semantically similar to the query point that MoCo tries to discriminate them from the query while our method does not.
-    </p>
+    <p> 
+  For two random query images, we show how the nearest neighbors evolve at the learning time. Initially, NNs are not semantically 
+    quite related, but are close in low-level features. The accuracy of 1-NN classifier in the initialization is 1.5% which is 15
+    times larger than random chance (0.01%). This little signal is bootstrapped in our learning method and results in NNs of the 
+    late epochs which are mostly semantically related to the query image.
+  </p>
 
-<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/fig1.png" width="100%" alt style></p>
+<p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/fig1.jpg" width="100%" alt style></p>
     
   
-  <p> 
-  2. Most recent self-supervised learning methods including ours use an aggressive augmentation to learn good features.
-  However, those augmented images do not look natural to human eyes. This means they add a bias to the data that does not
-  exist in real world applications. We show that we can use a model trained with aggressive augmentation as a frozen teacher 
-  and then adapt it to another model that has not seen those aggressive augmentations. Interestingly the new model performs 
-  better than the teacher in down-stream transfer learning tasks. We believe this happens since the new model has adopted
-  priors of a more natural dataset through our similarity-based distillation.
-  </p>
+
   
   
     <h5 id="Method"><b>Method</b></h5>
-<p> 
-    We initialize both teacher and student networks from scratch and update the teacher as running average of the student.
-  We feed some random images to the teacher, and feed two different augmentations of a query image to both teacher and student. 
-  We capture the similarity of the query to the anchor points in the teacher's embedding space and transfer that knowledge to 
-  the student. We update the student based on KL divergence loss and update the teacher to be a slow moving average of the student.
-  This can be seen as a soft version of MoCo which can handle negative images that are similar to the query
-  image. Note that unlike contrastive learning and BYOL, we never compare two augmentations of the query images directly (positive pair)
+<p>
+      Similar to BYOL, we maintain two encoders ("target" and "online") using momentum update for the target encoder. 
+    We augment an image twice and feed to both encoders. We add the target embedding to the memory bank and look for its 
+    nearest neighbors in the memory bank. Obviously target embedding itself will be the first nearest neighbor. We want to 
+    shift the query image towards the mean of its nearest neighbors, so we minimize the summation of those distances.
+    Note that our method using only one nearest neighbor is identical to BYOL which pulls different augmentations together
+    without grouping different instances of images. To our knowledge, our method is the first in grouping different instances 
+    of images without contrasting between image instances or clusters.
     </p>
 
 <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/teaser.gif" width="90%" alt style></p>
@@ -89,9 +74,14 @@ title: Mean Shift for Self-Supervised Learning
 <h5 id="results"><b>Self-supervised Learning Results</b></h5>
 
     <p>
-        We compare our method with other SSL methods on Linear and Nearest Neighbor (NN) evaluation on ImageNet as well as recall 
-      on transfer learning settings. Our method (ISD) outperforms MoCo and BYOL in most evaluations. * denotes that CompRess is 
-      not directly comparable as it uses a larger SSL model as the teacher: MoCo-V2(ResNet50) for ResNet18 and SimCLR(ResNet50x4) for ResNet50.
+       We compare our model on the full ImageNet linear and nearest neighbor benchmarks using ResNet50.
+      We find that given similar computational budget, our models are better than other state-of-the-art methods. 
+      Our w/s variation works slightly better than the regular MSF. Note that methods with symmetric loss are not 
+      directly comparable with the other ones as they need to feed each image twice though each encoder. This results
+      in twice the computation for each mini-batch. One may argue that a non-symmetric BYOL with 200 epochs should be
+      compared with symmetric BYOL with 100 epochs only as they use similar amount of computation. Note that symmetric 
+      MoCo v2 with 400 epochs is almost the same as asymmetric MoCo v2 with 800 epochs (71.0 vs. 71.1). * denotes that
+      CompRess is not directly comparable as it trains ResNet50 using a larger SSL teacher model (SimCLR-ResNet50x4). 
         
     </p>
 <p style="text-align:center;"><img src="{{ site.baseurl }}/assets/images/result_table1.png" width="100%" alt style>
