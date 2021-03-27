@@ -63,7 +63,7 @@ title: Mean Shift for Self-Supervised Learning
       Similar to BYOL, we maintain two encoders ("target" and "online") using momentum update for the target encoder. 
     We augment an image twice and feed to both encoders. We add the target embedding to the memory bank and look for its 
     nearest neighbors in the memory bank. Obviously target embedding itself will be the first nearest neighbor. We want to 
-    shift the query image towards the mean of its nearest neighbors, so we minimize the summation of those distances.
+    shift the query image towards the mean of target's nearest neighbors, so we minimize the summation of those distances.
     Note that our method using only one nearest neighbor is identical to BYOL which pulls different augmentations together
     without grouping different instances of images. To our knowledge, our method is the first in grouping different instances 
     of images without contrasting between image instances or clusters.
