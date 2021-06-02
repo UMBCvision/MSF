@@ -4,6 +4,18 @@ Official code for "Mean Shift for Self-Supervised Learning"
   <img src="https://user-images.githubusercontent.com/62820830/112181641-fd0fdb80-8bd2-11eb-8444-8e0b0547e622.jpg" width="95%">
 </p>
 
+```
+@misc{koohpayegani2021mean,
+      title={Mean Shift for Self-Supervised Learning}, 
+      author={Soroush Abbasi Koohpayegani and Ajinkya Tejankar and Hamed Pirsiavash},
+      year={2021},
+      eprint={2105.07269},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+```
+
+
 # Requirements
 
 - Python >= 3.7.6
