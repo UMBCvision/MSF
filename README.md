@@ -1,5 +1,5 @@
 # MSF
-Official code for "Mean Shift for Self-Supervised Learning"
+Official code for "Mean Shift for Self-Supervised Learning" https://arxiv.org/abs/2105.07269
 <p align="center">
   <img src="https://user-images.githubusercontent.com/62820830/112181641-fd0fdb80-8bd2-11eb-8444-8e0b0547e622.jpg" width="95%">
 </p>
