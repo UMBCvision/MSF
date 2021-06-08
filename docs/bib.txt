@@ -1,6 +1,8 @@
-@inproceedings{koohpayegani2020compress,
-  title={CompRess: Self-Supervised Learning by Compressing Representations},
-  author={Koohpayegani, Soroush Abbasi and Tejankar, Ajinkya and Pirsiavash, Hamed},
-  booktitle={NeurIPS},
-  year={2020}
+@misc{koohpayegani2021mean,
+      title={Mean Shift for Self-Supervised Learning}, 
+      author={Soroush Abbasi Koohpayegani and Ajinkya Tejankar and Hamed Pirsiavash},
+      year={2021},
+      eprint={2105.07269},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
