@@ -49,8 +49,9 @@ def parse_option():
     parser.add_argument('--momentum', type=float, default=0.99)
     parser.add_argument('--mem_bank_size', type=int, default=128000)
     parser.add_argument('--topk', type=int, default=5)
-    parser.add_argument('--weak_strong', action='store_true',
-                        help='whether to strong/strong or weak/strong augmentation')
+    parser.add_argument('--augmentation', type=str, default='weak/strong',
+                        choices=['weak/strong', 'weak/weak', 'strong/weak', 'strong/strong'],
+                        help='use full or subset of the dataset')
 
     parser.add_argument('--weights', type=str, help='weights to initialize the model from')
     parser.add_argument('--resume', default='', type=str,
@@ -213,16 +214,19 @@ def get_shuffle_ids(bsz):
 
 
 class TwoCropsTransform:
-    """Take two random crops of one image as the query and target."""
-    def __init__(self, weak_transform, strong_transform):
-        self.weak_transform = weak_transform
-        self.strong_transform = strong_transform
-        print(self.weak_transform)
-        print(self.strong_transform)
+    def __init__(self, t_t, q_t):
+        self.q_t = q_t
+        self.t_t = t_t
+        print('======= Query transform =======')
+        print(self.q_t)
+        print('===============================')
+        print('======= Target transform ======')
+        print(self.t_t)
+        print('===============================')
 
     def __call__(self, x):
-        q = self.strong_transform(x)
-        t = self.weak_transform(x)
+        q = self.q_t(x)
+        t = self.t_t(x)
         return [q, t]
 
 
@@ -241,11 +245,12 @@ class GaussianBlur(object):
 # Create train loader
 def get_train_loader(opt):
     traindir = os.path.join(opt.data, 'train')
+    image_size = 224
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
     normalize = transforms.Normalize(mean=mean, std=std)
 
-    augmentation_strong = [
+    aug_strong = transforms.Compose([
         transforms.RandomResizedCrop(224, scale=(0.2, 1.)),
         transforms.RandomApply([
             transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)  # not strengthened
@@ -255,24 +260,34 @@ def get_train_loader(opt):
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         normalize
-    ]
+    ])
 
-    augmentation_weak = [
+    aug_weak = transforms.Compose([
         transforms.RandomResizedCrop(224, scale=(0.2, 1.)),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         normalize,
-    ]
+    ])
 
-    if opt.weak_strong:
+    if opt.augmentation == 'weak/strong':
         train_dataset = ImageFolderEx(
             traindir,
-            TwoCropsTransform(transforms.Compose(augmentation_weak), transforms.Compose(augmentation_strong))
+            TwoCropsTransform(t_t=aug_weak, q_t=aug_strong)
         )
-    else:
+    elif opt.augmentation == 'weak/weak':
         train_dataset = ImageFolderEx(
             traindir,
-            TwoCropsTransform(transforms.Compose(augmentation_strong), transforms.Compose(augmentation_strong))
+            TwoCropsTransform(t_t=aug_weak, q_t=aug_weak)
+        )
+    elif opt.augmentation == 'strong/weak':
+        train_dataset = ImageFolderEx(
+            traindir,
+            TwoCropsTransform(t_t=aug_strong, q_t=aug_weak)
+        )
+    else: # strong/strong
+        train_dataset = ImageFolderEx(
+            traindir,
+            TwoCropsTransform(t_t=aug_strong, q_t=aug_strong)
         )
 
     if opt.dataset == 'imagenet100':
@@ -281,7 +296,6 @@ def get_train_loader(opt):
     print('==> train dataset')
     print(train_dataset)
 
-    # NOTE: remove drop_last
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=opt.batch_size, shuffle=True,
         num_workers=opt.num_workers, pin_memory=True, drop_last=True)
