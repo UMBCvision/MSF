@@ -53,6 +53,17 @@ python train_msf.py \
   <DATASET PATH>
 ```
 
+# Pretrained Models
+
+| Model         | Top-1 Linear Classifier Accuracy | Top-1 Nearest Neighbor Accuracy | Top-1 KNN Accuracy | Link |
+| ------------------ | --------- |----------------------------------| ----------------- | ------- | ----------------- |
+| MSF(Resnet50) |               72.4%              |        62.5%        | 65.7% | [Pretrained Resnet50](https://drive.google.com/file/d/105TZ5IKqS9b5d_j2oP2wX0PkuGZ9rVRl/view?usp=sharing) |
+
+
+
+
+
+
 # License
 
 This project is under the MIT license.
