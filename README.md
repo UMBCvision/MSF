@@ -38,6 +38,12 @@ FAISS:
 
 # Training
 
+
+
+We train on 4 RTX6000 GPUs with 24GB of memory. But one can run our model with 4 RTX 2080Ti GPUs with 11GB of memory as well(with 128K memory bank). 200 Epochs of training with ResNet50 backbone will take approximately 140 hours to train. 
+
+
+
 Following command can be used to train the MSF 
 
 ```
