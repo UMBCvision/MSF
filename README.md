@@ -1,11 +1,20 @@
 # MSF
-Official code for <a href="https://www.csee.umbc.edu/~hpirsiav/papers/MSF_iccv21.pdf"> "Mean Shift for Self-Supervised Learning"</a> 
+Official code for <a href="https://www.csee.umbc.edu/~hpirsiav/papers/MSF_iccv21.pdf"> "Mean Shift for Self-Supervised Learning"</a> accepted as an oral presentation in ICCV 2021. 
 <!-- https://arxiv.org/abs/2105.07269 -->
 <p align="center">
   <img src="https://user-images.githubusercontent.com/62820830/112181641-fd0fdb80-8bd2-11eb-8444-8e0b0547e622.jpg" width="95%">
 </p>
 
 ```
+@InProceedings{Koohpayegani_2021_ICCV,
+    author    = {Koohpayegani, Soroush Abbasi and Tejankar, Ajinkya and Pirsiavash, Hamed},
+    title     = {Mean Shift for Self-Supervised Learning},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2021},
+    pages     = {10326-10335}
+}
+
 @misc{koohpayegani2021mean,
       title={Mean Shift for Self-Supervised Learning}, 
       author={Soroush Abbasi Koohpayegani and Ajinkya Tejankar and Hamed Pirsiavash},
